@@ -1,128 +1,43 @@
-#include <MASTERFOC.h>
-#ifndef ACB_DEFINITIONS_H
-#define ACB_DEFINITIONS_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
-// Firmware Version
-#define FIRMWARE_VERSION "1.0.2"
-// ACB v2.0 Pin Definitions
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+#include "main.h"
 
-// PWM Pin Definitions
-#define PWM_H_A PC0
-#define PWM_L_A PC13
-#define PWM_H_B PC1
-#define PWM_L_B PB0
-#define PWM_H_C PC2
-#define PWM_L_C PB1
+#define FLASH_BASE 0x0800FC00
+#define FLASH_TYPEERASE_PAGES ((uint32_t)0x08075000U)
+#define FLASH_PAGE_SIZE ((uint32_t)512 * 1024U)
+#define FLASH_TYPEPROGRAM_DOUBLEWORD ((uint32_t)0x0807F000U)
+#define FLASH_CMD_WREN ((uint8_t)0x06U)
+#define FLASH_CMD_WRITE ((uint8_t)0x02U)
+#define FLASH_CMD_READ ((uint8_t)0x03U)
+#define FLASH_TYPEPROGRAM_DOUBLEWORD ((uint8_t)FLASH_CMD_READ+120)
 
-// Encoder Pin Definitions
-#define ENCODER_A PA15
-#define ENCODER_B PB3
-#define ENCODER_Z PC10
-#define ENCODER_PPR 1024
-
-// Current Sense Pin Definitions
-#define CURR_A  PA0
-#define CURR_B  PA1
-// CURR_C =  -CURR_B -CURR_A for kirchoff
-
-// Board monitoring
-#define BUS_V PB15
-#define TEMP  PA8
-#define BUS_VOLTAGE_DIVIDER (1e3 / (1e3 + 33e3))
-#define TEMP_NTC_NOMINAL 10e3
-#define TEMP_NTC_B_CONSTANT 4200
-#define TEMP_R_FIXED 10e3
-#define BUTTON PB8
-
-// Internal STM32 ADC channels
-#define ATEMP 16  // Internal temperature sensor channel
-#define AVREF 0   // Internal voltage reference channel
-
-// Calibration memory addresses (from STM32G474 reference manual/datasheet)
-#define TS_CAL1_ADDR 0x1FFF75A8  // TS_CAL1 at 30°C, VDDA=3V
-#define TS_CAL2_ADDR 0x1FFF75CA  // TS_CAL2 at 130°C, VDDA=3V
-#define VREFINT_CAL_ADDR 0x1FFF75AA  // VREFINT_CAL at VDDA=3V
-
-// Calibration temperatures
-#define TS_CAL1_TEMP 30.0f
-#define TS_CAL2_TEMP 130.0f
-
-// LEDs
-#define COM_LED     PC7
-#define STATUS_LED  PC6
-
-// Driver Control Pin Definitions
-#define DRV_FAULT PB10
-#define DRV_EN  PB9
-#define DRV_CAL PB7
-
-// SPI Pin Definitions
-#define SPI_MOSI PA7
-#define SPI_MISO PA6
-#define SPI_SCK PA5
-#define SPI_CS_DRV PB5
-#define SPI_CS_POS PB6
-
-// MA730GQ Encoder Configuration
-#define MA730GQ_CS_PIN SPI_CS_POS  // Use the same CS pin as defined for SPI_CS_POS
-
-// DRV8323RSRGZR Driver Configuration
-#define DRV8323_CS_PIN SPI_CS_DRV  // Use the same CS pin as defined for SPI_CS_DRV
+struct ACBConfig {
+  uint16_t magic_number;
+  float velocity_p;
+  float velocity_i;
+  float velocity_d;
+  float angle_p;
+  float angle_i;
+  float angle_d;
+  float current_p;
+  float current_i;
+  float current_d;
+  float zero_electric_angle;
+  int sensor_direction;
+  int pole_pairs;
+  float min_angle;
+  float max_angle;
+  float absolute_angle_zero_calibration;
+};
 
 
-// Motor Configuration Constants
-#define MOTOR_POLE_PAIRS 19
-#define DEFAULT_POLE_PAIRS 19
+#ifdef __cplusplus
+}
+#endif
 
-// Current Sense Configuration
-#define SHUNT_RESISTANCE 0.003f  // Ohms
-#define CURRENT_GAIN 20.0f       // Current sense amplifier gain
-
-// Driver Configuration
-#define DEFAULT_PWM_FREQUENCY 20000
-#define DEFAULT_VOLTAGE_LIMIT 4
-
-// Serial Communication
-#define SERIAL_BAUD_RATE 2000000
-#define DEBUG_SERIAL_BAUD_RATE 2000000
-
-// Timing Constants
-#define DRV_CAL_DELAY_MS 10
-#define MOTOR_READY_DELAY_MS 1000
-#define PRINT_INTERVAL_MS 5
-
-// Motion Control Types
-#define DEFAULT_CONTROLLER MotionControlType::velocity
-
-// Default Target Values
-#define DEFAULT_TARGET_VELOCITY 0.0f
-#define DEFAULT_VOLTAGE_LIMIT_FACTOR 0.5f
-
-// Default PID Values
-#define DEFAULT_VELOCITY_P 0.25f
-#define DEFAULT_VELOCITY_I 1.0f
-#define DEFAULT_VELOCITY_D 0.001f
-#define DEFAULT_ANGLE_P 20.0f
-#define DEFAULT_ANGLE_I 1.0f
-#define DEFAULT_ANGLE_D 0.0f
-#define DEFAULT_CURRENT_P 1.0f
-#define DEFAULT_CURRENT_I 0.1f
-#define DEFAULT_CURRENT_D 0.001f
-
-// Default Angle Limits (in degrees)
-#define DEFAULT_MIN_ANGLE -180.0f
-#define DEFAULT_MAX_ANGLE 180.0f
-
-// EEPROM Storage Addresses
-#define EEPROM_CONFIG_START_ADDR 0
-#define EEPROM_CONFIG_MAGIC_NUMBER 0xACB4
-
-// IWDG (Independent Watchdog) Configuration
-#define IWDG_TIMEOUT_MS 2000  // 2 second timeout
-#define IWDG_PRESCALER IWDG_PRESCALER_64  // 64 prescaler for ~32kHz LSI
-#define IWDG_RELOAD_VALUE ((IWDG_TIMEOUT_MS * 32000) / (64 * 1000))  // Calculate reload value
-
-#define CONFIG_FLASH_ADDRESS   ((uint32_t)0x0803F800)  // Flash start adress
-
-#endif // ACB_DEFINITIONS_H
+#endif
