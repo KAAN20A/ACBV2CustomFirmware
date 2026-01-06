@@ -207,6 +207,11 @@ $(BUILD_DIR):
 #######################################
 clean:
 	-rm -fR $(BUILD_DIR)
+load:
+	openocd \
+	-f /usr/local/xpack-openocd-0.12.0-1/openocd/scripts/interface/stlink.cfg \
+	-f /usr/local/xpack-openocd-0.12.0-1/openocd/scripts/target/stm32g4x.cfg \
+	-c "program build/acb_v2_firmware.elf verify reset exit"
 
 #######################################
 # dependencies
